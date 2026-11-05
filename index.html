@@ -60,23 +60,30 @@
 </head>
 <body>
     <div class="container">
+        <!-- Секция 1: Заголовок -->
         <section id="s1">
             <h1>Прости меня</h1>
+            <p style="text-align: center; margin-bottom: 30px;">Я знаю, что слова не исправят всё мгновенно, но я хочу, чтобы ты услышал(а) меня.</p>
             <div class="center"><a href="#s2" class="btn">Прочитай, пожалуйста</a></div>
         </section>
 
+        <!-- Секция 2: Что я хочу сказать -->
         <section id="s2">
             <h2>Что я хочу сказать</h2>
-            <p>Здесь напиши свой текст извинения...</p>
+            <p>Мне очень жаль, что между нами произошло это недопонимание. Я ценю тебя и наши отношения больше, чем свою гордость или правоту.</p>
+            <p>Я понимаю, что мои действия (или слова) причинили тебе боль, и мне от этого невыносимо тяжело. Ты важен(на) для меня, и я не хочу терять то, что у нас есть, из-за одной ошибки.</p>
             <div class="center"><a href="#s3" class="btn">Дальше</a></div>
         </section>
 
+        <!-- Секция 3: Что я понял -->
         <section id="s3">
             <h2>Что я понял</h2>
-            <p>Здесь напиши, что ты осознал...</p>
-            <div class="center"><a href="#s4" class="btn">Дальше</a></div>
+            <p>Я осознал(а), что был(а) неправ(а). Вместо того чтобы слушать и понимать твои чувства, я сосредоточился(ась) на себе. Это было эгоистично и несправедливо по отношению к тебе.</p>
+            <p>Я обещаю работать над собой, быть внимательнее и уважать твои границы. Такие ситуации не должны повторяться, потому что твой комфорт и наше доверие для меня важнее всего.</p>
+            <div class="center"><a href="#s4" class="btn">Твой ответ</a></div>
         </section>
 
+        <!-- Секция 4: Форма ответа -->
         <section id="s4">
             <h2>Твой ответ</h2>
             
@@ -85,33 +92,37 @@
                 <div class="radio-group">
                     <div class="radio-option">
                         <input type="radio" id="forgive-yes" name="forgive" value="Да, прощаю">
-                        <label for="forgive-yes">Да, прощаю</label>
+                        <label for="forgive-yes">Да, прощаю ❤️</label>
                     </div>
                     <div class="radio-option">
-                        <input type="radio" id="forgive-no" name="forgive" value="Нет">
-                        <label for="forgive-no">Нет</label>
+                        <input type="radio" id="forgive-no" name="forgive" value="Нет, нужно время">
+                        <label for="forgive-no">Нужно время ⏳</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="forgive-maybe" name="forgive" value="Не знаю">
+                        <label for="forgive-maybe">Пока не знаю 💭</label>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="wish">Что ты хочешь, чтобы мы сделали?</label>
-                <input type="text" id="wish" placeholder="Напиши здесь...">
+                <input type="text" id="wish" placeholder="Например: просто обняться, поговорить, побыть одному...">
             </div>
 
             <div class="form-group">
-                <label for="date">Когда тебе удобно?</label>
+                <label for="date">Когда тебе удобно встретиться/поговорить?</label>
                 <input type="date" id="date">
             </div>
 
             <div class="form-group">
                 <label for="message">Хочешь что-то написать? (можно оставить пустым)</label>
-                <textarea id="message" placeholder="Твоё сообщение..."></textarea>
+                <textarea id="message" placeholder="Твои мысли, чувства или условия..."></textarea>
             </div>
 
             <div class="button-group">
-                <button class="btn" onclick="sendToTelegram()">Отправить</button>
-                <button class="btn btn-secondary" onclick="copyToClipboard()">Скопировать</button>
+                <button class="btn" onclick="sendToTelegram()">Отправить ответ</button>
+                <button class="btn btn-secondary" onclick="copyToClipboard()">Скопировать текст</button>
             </div>
 
             <div id="status" class="status"></div>
@@ -119,7 +130,7 @@
     </div>
 
     <script>
-        // ✅ Ваши новые токены
+        // ✅ Ваши данные (уже проверены)
         const BOT_TOKEN = '9016950428:AAEM2avKuB93m16Lz7KT6glkFmRnNMI9wyg';
         const CHAT_ID = '2114764105';
 
@@ -130,11 +141,11 @@
             const message = document.getElementById('message').value;
 
             if (!forgive) {
-                showStatus('Пожалуйста, выбери вариант "Прощаешь?"', 'error');
+                showStatus('Пожалуйста, выбери вариант ответа', 'error');
                 return;
             }
 
-            const text = `📨 Новый ответ:\n\n✅ Прощаешь: ${forgive.value}\n💭 Что хочешь сделать: ${wish || 'не указано'}\n📅 Когда удобно: ${date || 'не указано'}\n✉️ Сообщение: ${message || 'пусто'}`;
+            const text = `📨 Новый ответ на извинения:\n\n✅ Решение: ${forgive.value}\n💭 Пожелание: ${wish || 'не указано'}\n📅 Дата: ${date || 'не указана'}\n✉️ Сообщение: ${message || 'пусто'}`;
 
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -144,12 +155,12 @@
             .then(res => res.json())
             .then(data => {
                 if (data.ok) {
-                    showStatus('✅ Сообщение отправлено!', 'success');
+                    showStatus('✅ Ответ отправлен! Спасибо, что прочитал(а).', 'success');
                 } else {
-                    showStatus('❌ Ошибка: ' + (data.description || 'Проверь токены'), 'error');
+                    showStatus('❌ Ошибка: ' + (data.description || 'Проверь соединение'), 'error');
                 }
             })
-            .catch(() => showStatus('❌ Ошибка сети', 'error'));
+            .catch(() => showStatus('❌ Ошибка сети. Попробуй ещё раз.', 'error'));
         }
 
         function copyToClipboard() {
@@ -157,10 +168,10 @@
             const wish = document.getElementById('wish').value;
             const date = document.getElementById('date').value;
             const message = document.getElementById('message').value;
-            const text = `Прощаешь: ${forgive ? forgive.value : 'не выбрано'}\nЧто хочешь сделать: ${wish}\nКогда удобно: ${date}\nСообщение: ${message}`;
+            const text = `Решение: ${forgive ? forgive.value : 'не выбрано'}\nПожелание: ${wish}\nДата: ${date}\nСообщение: ${message}`;
             
             navigator.clipboard.writeText(text)
-                .then(() => showStatus('📋 Скопировано!', 'success'))
+                .then(() => showStatus('📋 Скопировано в буфер обмена!', 'success'))
                 .catch(() => showStatus('❌ Не удалось скопировать', 'error'));
         }
 
