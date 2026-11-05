@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прости меня</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; color: #333; line-height: 1.6;
+        }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+        section {
+            background: white; border-radius: 20px; padding: 40px 30px;
+            margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeIn 0.8s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { font-size: 2.5em; text-align: center; margin-bottom: 30px; color: #667eea; }
+        h2 { font-size: 1.5em; margin-bottom: 20px; color: #764ba2; }
+        p { font-size: 1.1em; margin-bottom: 15px; color: #555; }
+        .btn {
+            display: inline-block; padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; text-decoration: none; border-radius: 25px;
+            border: none; cursor: pointer; font-size: 1em;
+            transition: transform 0.2s, box-shadow 0.2s; margin: 5px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%; padding: 12px; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 1em; transition: border-color 0.3s; font-family: inherit;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; }
+        textarea { resize: vertical; min-height: 100px; }
+        .radio-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .radio-option { flex: 1; min-width: 120px; }
+        .radio-option input[type="radio"] { display: none; }
+        .radio-option label {
+            display: block; padding: 15px; background: #f5f5f5;
+            border-radius: 10px; text-align: center; cursor: pointer;
+            transition: all 0.3s; border: 2px solid transparent;
+        }
+        .radio-option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border-color: #667eea;
+        }
+        .button-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        .status { margin-top: 15px; padding: 12px; border-radius: 10px; display: none; }
+        .status.success { background: #d4edda; color: #155724; display: block; }
+        .status.error { background: #f8d7da; color: #721c24; display: block; }
+        .center { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section id="s1">
+            <h1>Прости меня</h1>
+            <div class="center"><a href="#s2" class="btn">Прочитай, пожалуйста</a></div>
+        </section>
+
+        <section id="s2">
+            <h2>Что я хочу сказать</h2>
+            <p>Здесь напиши свой текст извинения...</p>
+            <div class="center"><a href="#s3" class="btn">Дальше</a></div>
+        </section>
+
+        <section id="s3">
+            <h2>Что я понял</h2>
+            <p>Здесь напиши, что ты осознал...</p>
+            <div class="center"><a href="#s4" class="btn">Дальше</a></div>
+        </section>
+
+        <section id="s4">
+            <h2>Твой ответ</h2>
+            
+            <div class="form-group">
+                <label>Прощаешь?</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="forgive-yes" name="forgive" value="Да, прощаю">
+                        <label for="forgive-yes">Да, прощаю</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="forgive-no" name="forgive" value="Нет">
+                        <label for="forgive-no">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="wish">Что ты хочешь, чтобы мы сделали?</label>
+                <input type="text" id="wish" placeholder="Напиши здесь...">
+            </div>
+
+            <div class="form-group">
+                <label for="date">Когда тебе удобно?</label>
+                <input type="date" id="date">
+            </div>
+
+            <div class="form-group">
+                <label for="message">Хочешь что-то написать? (можно оставить пустым)</label>
+                <textarea id="message" placeholder="Твоё сообщение..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn" onclick="sendToTelegram()">Отправить</button>
+                <button class="btn btn-secondary" onclick="copyToClipboard()">Скопировать</button>
+            </div>
+
+            <div id="status" class="status"></div>
+        </section>
+    </div>
+
+    <script>
+        // ✅ Ваши новые токены
+        const BOT_TOKEN = '9016950428:AAEM2avKuB93m16Lz7KT6glkFmRnNMI9wyg';
+        const CHAT_ID = '9016950428';
+
+        function sendToTelegram() {
+            const forgive = document.querySelector('input[name="forgive"]:checked');
+            const wish = document.getElementById('wish').value;
+            const date = document.getElementById('date').value;
+            const message = document.getElementById('message').value;
+
+            if (!forgive) {
+                showStatus('Пожалуйста, выбери вариант "Прощаешь?"', 'error');
+                return;
+            }
+
+            const text = `📨 Новый ответ:\n\n✅ Прощаешь: ${forgive.value}\n💭 Что хочешь сделать: ${wish || 'не указано'}\n📅 Когда удобно: ${date || 'не указано'}\n✉️ Сообщение: ${message || 'пусто'}`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    showStatus('✅ Сообщение отправлено!', 'success');
+                } else {
+                    showStatus('❌ Ошибка: ' + (data.description || 'Проверь токены'), 'error');
+                }
+            })
+            .catch(() => showStatus('❌ Ошибка сети', 'error'));
+        }
+
+        function copyToClipboard() {
+            const forgive = document.querySelector('input[name="forgive"]:checked');
+            const wish = document.getElementById('wish').value;
+            const date = document.getElementById('date').value;
+            const message = document.getElementById('message').value;
+            const text = `Прощаешь: ${forgive ? forgive.value : 'не выбрано'}\nЧто хочешь сделать: ${wish}\nКогда удобно: ${date}\nСообщение: ${message}`;
+            
+            navigator.clipboard.writeText(text)
+                .then(() => showStatus('📋 Скопировано!', 'success'))
+                .catch(() => showStatus('❌ Не удалось скопировать', 'error'));
+        }
+
+        function showStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.textContent = msg;
+            el.className = `status ${type}`;
+            setTimeout(() => el.className = 'status', 5000);
+        }
+    </script>
+</body>
+</html>
